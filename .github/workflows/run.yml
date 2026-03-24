@@ -117,10 +117,13 @@ jobs:
 
         python enhance.py --data ../data/${today}.jsonl
         
+        AI_FILE="../data/${today}_AI_enhanced_${LANGUAGE}.jsonl"
+        RAW_FILE="../data/${today}.jsonl"
+          
         # 检查AI处理是否成功 / Check if AI processing was successful
-        if [ $? -ne 0 ]; then
-            echo "AI处理失败 / AI processing failed"
-            exit 1
+        if [ ! -s "$AI_FILE" ]; then
+            echo "AI输出为空，回退到原始文件"
+            cp "$RAW_FILE" "$AI_FILE"
         fi
         echo "AI增强处理完成 / AI enhancement processing completed"
         
@@ -138,10 +141,14 @@ jobs:
         
         # 使用AI增强文件进行转换 / Use AI enhanced file for conversion
         AI_FILE="../data/${today}_AI_enhanced_${LANGUAGE}.jsonl"
+        RAW_FILE="../data/${today}.jsonl"
         
         if [ -f "$AI_FILE" ]; then
             echo "使用AI增强文件进行转换... / Using AI enhanced file for conversion..."
             python convert.py --data "$AI_FILE"
+        elif [ -f "$RAW_FILE" ]; then
+            echo "AI文件不可用，回退到原始文件"
+            python convert.py --data "$RAW_FILE"
         else
             echo "错误：未找到AI增强文件 / Error: AI enhanced file not found"
             echo "AI文件: $AI_FILE"
