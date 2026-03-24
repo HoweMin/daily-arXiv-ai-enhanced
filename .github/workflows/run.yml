@@ -109,7 +109,12 @@ jobs:
         export OPENAI_BASE_URL=${{ secrets.OPENAI_BASE_URL }}
         export LANGUAGE="${{ vars.LANGUAGE }}"
         export MODEL_NAME="${{ vars.MODEL_NAME }}"
-        
+
+        echo "AI_ENHANCEMENT_ENABLED=${{ vars.AI_ENHANCEMENT_ENABLED }}"
+        [ -n "$OPENAI_API_KEY" ] && echo "OPENAI_API_KEY is set" || echo "OPENAI_API_KEY is EMPTY"
+        [ -n "$OPENAI_BASE_URL" ] && echo "OPENAI_BASE_URL=$OPENAI_BASE_URL" || echo "OPENAI_BASE_URL is EMPTY"
+        [ -n "$MODEL_NAME" ] && echo "MODEL_NAME=$MODEL_NAME" || echo "MODEL_NAME is EMPTY"
+
         python enhance.py --data ../data/${today}.jsonl
         
         # 检查AI处理是否成功 / Check if AI processing was successful
